@@ -359,3 +359,5 @@ if __name__ == "__main__":
         sys.exit(1)
     filename = sys.argv[1]
     analyze_elf(filename)
+    print("\n\nANALYSIS COMPLETE. YAY!! idk if it showed errors or something, see that yourself.")
+    print("This disassembler is made with love <3 \n\t\t\t\t\t\t- Shiny ★")
