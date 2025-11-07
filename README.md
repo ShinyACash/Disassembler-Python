@@ -31,10 +31,13 @@ This isn't just a disassembler. It's an analysis engine (sorta).
 
 ---
 
-## 🔧 Installation
+## Installation and How to Use?
 
 This tool relies on two key libraries: `pyelftools` for parsing the ELF file and `capstone` for the core disassembly.
 
 ```bash
 pip install pyelftools capstone
 ```
+
+* Make sure that the elf file you are trying to disassemble is in the same directory as the python file.
+* Run `python decompiler.py <elf-file>`
