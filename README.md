@@ -1,6 +1,6 @@
 # Python Disassembler (that also tries to decompile)
 
-This is lowkey a decompiler and static analysis engine for 64-bit ELF binaries, written entirely in Python. I made this for my personal use in CTFs and its just that 
+This is lowkey a decompiler and static analysis engine for 64-bit ELF binaries, written entirely in Python. I made this for my personal use in CTFs and its just that some decompilers online dont work above 2mb size and the fact that I can literally add my own features into this makes it interesting for me.
 
 </br>
 
