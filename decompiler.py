@@ -1,4 +1,5 @@
 import sys
+import argparse
 from elftools.elf.elffile import ELFFile
 from elftools.elf.relocation import RelocationSection
 from capstone import *
@@ -188,7 +189,7 @@ class BasicBlock:
         print(f"    [PREDECESSORS]: {', '.join(sorted(pred_addrs)) or 'None'}")
         print(f"    [STACK_ACCESS]: {', '.join(sorted(list(self.stack_accesses))) or 'None'}")
 
-def analyze_elf(filename):
+def analyze_elf(filename, only_disasm=False, only_decompile=False):
     print(f"[*] Analyzing: {filename}\n")
     try:
         with open(filename, 'rb') as f:
@@ -335,13 +336,17 @@ def analyze_elf(filename):
                             block.tags.add("LOOP_LATCH"); succ.tags.add("LOOP_HEADER")
                     if block.instructions[-1].mnemonic == 'ret': block.tags.add("FUNCTION_RETURN")
 
-                print("\n--- C-Like Control Flow ---")
-                for block in blocks:
-                    block.print_c_like()
+                # C-like decompilation (higher-level view)
+                if not only_disasm:
+                    print("\n--- C-Like Control Flow ---")
+                    for block in blocks:
+                        block.print_c_like()
 
-                print("\n\n--- Full Disassembly & CFG ---")
-                for block in blocks:
-                    block.print_full_disassembly()
+                # Full disassembly and CFG (lower-level view)
+                if not only_decompile:
+                    print("\n\n--- Full Disassembly & CFG ---")
+                    for block in blocks:
+                        block.print_full_disassembly()
                 
                 all_blocks.extend(blocks)
 
@@ -354,10 +359,13 @@ def analyze_elf(filename):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: python3 decompiler.py <path_to_elf_file>")
-        sys.exit(1)
-    filename = sys.argv[1]
-    analyze_elf(filename)
+    parser = argparse.ArgumentParser(description='Disassemble and decompile simple ELF x86_64 binaries')
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('-ds', '--disasm-only', action='store_true', dest='disasm_only', help='Only print full disassembly (skip C-like decompilation)')
+    group.add_argument('-de', '--decompile-only', action='store_true', dest='decompile_only', help='Only print C-like decompilation (skip full disassembly)')
+    parser.add_argument('filename', help='Path to the ELF file to analyze')
+    args = parser.parse_args()
+
+    analyze_elf(args.filename, only_disasm=args.disasm_only, only_decompile=args.decompile_only)
     print("\n\nANALYSIS COMPLETE. YAY!! idk if it showed errors or something, see that yourself.")
-    print("This disassembler is made with love <3 \n\t\t\t\t\t\t- Shiny ★")
+    print("This disassembler is made with love <3 \t\t\t- Shiny ★")
