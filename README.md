@@ -50,4 +50,4 @@ python decompiler.py <elf-file>
 * for help run `python decompiler.py -help`
 
 ## Things to note:
-* This is still under development and mayb come accross errors when disassembling/decompiling. Disassembling shouldnt be a problem but there may be errors in decompiling to C like code.
+* This is still under development and may come accross errors when disassembling/decompiling. Disassembling shouldnt be a problem but there may be errors in decompiling to C like code.
