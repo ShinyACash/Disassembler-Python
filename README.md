@@ -40,4 +40,8 @@ pip install pyelftools capstone
 ```
 
 * Make sure that the elf file you are trying to disassemble is in the same directory as the python file.
-* Run `python decompiler.py <elf-file>`
+### Run :
+`python decompiler.py <elf-file>`
+
+## Things to note:
+* This is still under development and mayb come accross errors when disassembling/decompiling. Disassembling shouldnt be a problem but there may be errors in decompiling to C like code.
