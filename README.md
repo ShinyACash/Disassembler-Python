@@ -104,15 +104,112 @@ pip install -r requirements.txt
 ## Usage
 
 ```bash
-pip install pyelftools capstone
+# Decompile all functions to clean C with syntax highlighting (Default mode)
+python declaw.py binary_file
+
+# Decompile a specific function (by name or hex address)
+python declaw.py binary_file -f main
+
+# View modernized block-by-block disassembly & CFG view with inlined annotations
+python declaw.py binary_file -dasm -f main
+
+# Run Deep Inter-Procedural Analysis (mitigations, crypto detection, vuln audit, call graphs)
+python declaw.py binary_file -da
+
+# Export decompiled C code directly to a file
+python declaw.py binary_file -f main -o output.c
+
+# Output plain text without ANSI terminal formatting (for piping / grep)
+python declaw.py binary_file -f main --raw
 ```
 
-* Make sure that the elf file you are trying to disassemble is in the same directory as the python file.
-### Run :
-* `python decompiler.py <elf-file>`
-* `python decompiler.py -ds <elf-file>` for only displaying disassembled code.
-* `python decompiler.py -de <elf-file>` for only displaying possible C like control flow.
-* for help run `python decompiler.py -help`
+### Command-Line Options
 
-## Things to note:
-* This is still under development and mayb come accross errors when disassembling/decompiling. Disassembling shouldnt be a problem but there may be errors in decompiling to C like code.
+| Flag | Full Option | Description |
+| :--- | :--- | :--- |
+| *(default)* | | Decompile binary to structured C-like code with syntax highlighting |
+| `-dasm`, `-ds` | `--disasm` | Display modern block-by-block disassembly, lifted C statements, and CFG panels |
+| `-da` | `--deep` | Run deep analysis: security mitigations, crypto constant detection, vuln audit & complexity |
+| `-de` | `--decompile` | Explicitly request C decompilation (same as default) |
+| `-f` | `--function` | Target a specific function by symbol name (e.g. `main`) or hex address (e.g. `0x401120`) |
+| `-o` | `--output` | Save the generated C code into a `.c` file complete with standard headers |
+| `--raw` | `--raw` | Emit plain text output without Rich terminal panels or color codes |
+| `-h` | `--help` | Show command-line help message |
+
+---
+
+## Analysis Modes
+
+### 1. High-Level C Decompilation (Default)
+Emits structured C code without compiler artifacts, stack canary checks, or unnecessary `goto` statements. Folds expressions, recovers loops (`for`, `while`), resolves jump tables (`switch-case`), and infers buffer types.
+
+### 2. Modern Block-by-Block Disassembly (`-dasm`)
+Designed for low-level reverse engineering with maximum terminal clarity:
+* **Styled Basic Block Panels:** Color-coded rounded boxes (green entry, magenta exit, bright blue intermediate).
+* **Syntax Color-Coded Mnemonics:** Calls/jumps in yellow, arithmetic/logic in green, data movement in cyan, comparisons in red.
+* **Inlined Semantic Annotations:** Automatically resolves branch targets, call targets (`➔ printf()`), strings (`"Enter key: "`), and global symbols (`&stdin`).
+* **Lifted C Statements & CFG Details:** Displays lifted C logic per block alongside Jump Type, Taken/Fall branches, and Predecessors with directional connecting flow arrows.
+
+### 3. Deep Inter-Procedural Analysis (`-da` / `--deep`)
+Performs thorough multi-pass static binary auditing:
+* **Binary Mitigations:** Audits NX/DEP, PIE/ASLR, Stack Canary (`fs:[0x28]`), RELRO (Full / Partial / None), and stripped symbol state.
+* **Shannon Section Entropy:** Detects packed, compressed, or encrypted sections ($\ge 6.8$ bits/byte).
+* **CTF Logic & Flag Detection:** Surfaces Base64 secrets, hardcoded flag strings, stack strings, authorization routines, and win functions.
+* **User-Defined Global Variable Enumeration:** Tracks variables across `.data`, `.bss`, and `.rodata` with initial values, roles, and referencing functions.
+* **Cryptographic & Math Constant Detection:** Identifies TEA/XTEA deltas (`0x9e3779b9`, `0x61c88647`), MD5/SHA-1 states, SHA-256 rounds, CRC32 polynomials (`0xedb88320`), LFSR seeds (`0x13579bdf`), custom cipher constants (`0xf5a4ada5`), and Base64 tables.
+* **Vulnerability & Anti-Analysis Audit:** Flags format string bugs (`printf(&var)`), dangerous calls (`gets()`), unbounded string functions (`strcpy`, `sprintf`), and anti-debugging checks (`ptrace`).
+* **Complexity & Call Graphs:** Calculates McCabe cyclomatic complexity $M = E - N + 2$, caller/callee cross-references, and prepends threat-intel headers to decompiled C functions.
+
+---
+
+## Example Output
+
+Decompiling the `menu` function from a switch-case binary (`challenge`):
+
+```c
+// ==================== menu (0x40124b) ====================
+int menu() {
+    int var_8 = 0;
+
+    print_menu();
+    __isoc99_scanf("%d", &var_8);
+    switch (var_8) {
+        case 0:
+            puts("You are a real hacker!");
+            break;
+        case 1:
+            vuln();
+            break;
+        case 2:
+            secret();
+            break;
+        case 3:
+            puts("Good Bye!");
+            exit(0);
+            break;
+        default:
+            puts("Invalid choice!");
+            break;
+    }
+    return;
+}
+```
+
+Decompiling `imperial_archive` (32-bit ELF with full argument recovery):
+
+```c
+// ==================== main (0x80493f2) ====================
+int main(int argc, char **argv) {
+    setbuf(stdout, 0);
+    setbuf(stderr, 0);
+    puts("=== Mauryan Royal Archive v1.0 ===");
+    scribe_function();
+    return 0;
+}
+```
+
+---
+
+## License
+
+MIT License. Designed and maintained for CTF competitors, security analysts, and reverse engineers.
