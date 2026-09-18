@@ -1,10 +1,4 @@
 #!/usr/bin/env python3
-"""
-declaw - Universal Binary Decompiler & Binary Analysis Engine
-Decompiles ELF, PE, and Mach-O executables into clean, human-readable,
-idiomatic C code with AST-based control-flow structuring and SSA-like expression propagation.
-"""
-
 import sys
 import os
 import io
@@ -2283,7 +2277,7 @@ def decompile_binary(filename: str,
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         prog='declaw.py',
-        description='declaw - Next-Generation C Binary Decompiler & Binary Analysis Engine',
+        description='declaw - uhh binary decompiler and stuff. :)',
         formatter_class=argparse.RawTextHelpFormatter
     )
     group = parser.add_mutually_exclusive_group()
