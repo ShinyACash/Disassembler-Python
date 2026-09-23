@@ -1,6 +1,6 @@
 # declaw - Universal Binary Decompiler & Binary Analysis Engine
 
-An advanced, lightweight executable decompiler and static analysis engine written in Python. Built for reverse engineering and CTF competitions, it transforms raw machine code from ELF (Linux), PE (Windows), and Mach-O (macOS) binaries into clean, structured, and idiomatic C code—often producing output that is more readable and intuitive than Ghidra or IDA Pro.
+An advanced, lightweight executable decompiler and static analysis engine written in Python. Built for reverse engineering and CTF competitions, it transforms raw machine code from ELF (Linux), PE (Windows), and Mach-O (macOS) binaries into clean, structured, and idiomatic C code, often producing output that is more readable and intuitive than Ghidra or IDA Pro.
 
 ---
 
